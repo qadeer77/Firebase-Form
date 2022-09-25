@@ -2,8 +2,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebas
 import {
     getAuth,
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
 } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
+
+import {
+    doc,
+    setDoc,
+    getDoc,
+    getFirestore,
+} from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+
+
 const firebaseConfig = {
     apiKey: "AIzaSyAUJOB_8K4JD8eDbPee2SfVpjx8QXePJcI",
     authDomain: "abdul-qadeer123.firebaseapp.com",
@@ -14,10 +23,9 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
+const db = getFirestore();
 
 
-
-// Variables
 let name = document.querySelector("#name");
 let fatherName = document.querySelector("#fatherName");
 let dateOfBirth = document.querySelector("#dateOfBirth");
@@ -26,11 +34,10 @@ let password = document.querySelector("#password");
 let form = document.querySelector("form");
 let loginEmail = document.querySelector("#loginEmail");
 let loginPassword = document.querySelector("#loginPassword");
-let loginForm = document.querySelector("#loginForm");
+let login = document.getElementById("login");
+let signUp = document.getElementById("signUp");
 
-// Regix
-
-form.addEventListener("submit", (event) => {
+signUp.addEventListener("click", (event) => {
     event.preventDefault()
 
     const nameRegix = /^\s*$/.test(name.value);
@@ -44,117 +51,118 @@ form.addEventListener("submit", (event) => {
     const passwordRegix2 = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$/.test(password.value);
 
 
-    createUserWithEmailAndPassword(auth, email.value, password.value)
-        .then((userCredential) => {
-            // Signed in 
-            const user = userCredential.user;
-            console.log("user==>" + JSON.stringify(user))
-            // ...
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            swal("warning!", "You have already registred!", "error");
-            // ..
-        });
+
+    if (!nameRegix && nameRegix2 && !fatherNameRegix && fatherNameRegix2 && !dateRegix && !emailRegix && emailRegix2 && !passwordRegix && passwordRegix2) {
+        createUserWithEmailAndPassword(auth, email.value, password.value)
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+                await setDoc(doc(db, "user", user.uid), {
+                    FullName: name.value,
+                    FatherName: fatherName.value,
+                    DateOfBirth: dateOfBirth.value,
+                    EmailAddress: email.value,
+                    Password: password.value,
+                });
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                swal("warning!", "You have already registred!", "error");
+            });
+    }
 
 
-    let flag;
+
     if (nameRegix) {
         swal("Your Name is Empty");
-        flag = false;
     }
     else if (!nameRegix2) {
         swal("warning!", "Your name must be contain 4 or more asciii character!", "error");
-        flag = false;
     }
     else if (fatherNameRegix) {
         swal("Your Father Name is Empty");
-        flag = false;
     }
     else if (!fatherNameRegix2) {
         swal("warning!", "Your Father name must be contain 4 or more asciii character!", "error");
-        flag = false;
     }
     else if (dateRegix) {
         swal("Your date is Empty");
-        flag = false;
     }
     else if (emailRegix) {
         swal("Your Email Address is Empty");
-        flag = false;
     }
     else if (!emailRegix2) {
         swal("warning!", "Your Email Address is invalid!", "error");
-        flag = false;
     }
     else if (passwordRegix) {
         swal("Your password is Empty");
-        flag = false;
     }
     else if (!passwordRegix2) {
         swal("warning!", "Your password must be contain 8 character the Numbers and Strings!", "error");
-        flag = false;
-    }
-    else {
-        flag = true;
-    }
-    if (flag) {
-        name.value = "";
-        fatherName.value = "";
-        dateOfBirth.value = "";
-        email.value = "";
-        password.value = "";
     }
 })
 
 
-loginForm.addEventListener("submit", (event) => {
-    event.preventDefault()
+// login.addEventListener("click", (event) => {
+//     event.preventDefault()
 
 
-    const loginEmailRegix = /^\s*$/.test(loginEmail.value);
-    const loginEmailRegix2 = /^([a-zA-Z0-9\._]+)@([a-zA-Z0-9])+.([a-z]+)(.[a-z]+)?$/.test(loginEmail.value);
-    const loginPasswordRegix = /^\s*$/.test(loginPassword.value);
-    const loginPasswordRegix2 = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$/.test(loginPassword.value);
-
-    signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
-        .then((userCredential) => {
-            // Signed in 
-            const user = userCredential.user;
-            console.log("user===>" + JSON.stringify(user));
-            // ...
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            swal("warning!", "Ist you are go and create Account!", "error");
-        });
+//     const loginEmailRegix = /^\s*$/.test(loginEmail.value);
+//     const loginEmailRegix2 = /^([a-zA-Z0-9\._]+)@([a-zA-Z0-9])+.([a-z]+)(.[a-z]+)?$/.test(loginEmail.value);
+//     const loginPasswordRegix = /^\s*$/.test(loginPassword.value);
+//     const loginPasswordRegix2 = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$/.test(loginPassword.value);
 
 
-    let loginFlag;
-    if (loginEmailRegix) {
-        swal("Your Email Address is Empty");
-        loginFlag = false;
-    }
-    else if (!loginEmailRegix2) {
-        swal("warning!", "Your Email Address is invalid!", "error");
-        loginFlag = false;
-    }
-    else if (loginPasswordRegix) {
-        swal("Your password is Empty");
-        loginFlag = false;
-    }
-    else if (!loginPasswordRegix2) {
-        swal("warning!", "Your password must be contain 8 character the Numbers and Strings!", "error");
-        loginFlag = false;
-    }
-    else {
-        loginFlag = true;
-    }
-    if (loginFlag) {
-        loginEmail.value = "";
-        loginPassword.value = "";
-    }
+//     if (!loginEmailRegix && loginEmailRegix2 && !loginPasswordRegix && loginPasswordRegix2) {
 
-})
+//     signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
+//         .then(async(userCredential) => {
+//             // Signed in
+//             const user = userCredential.user;
+//             const docRef = doc(db, "user", user.uid);
+//             const docSnap = await getDoc(docRef);
+
+//             if (docSnap.exists()) {
+//                 console.log("Document data:", docSnap.data());
+//             } else {
+//                 // doc.data() will be undefined in this case
+//                 console.log("No such document!");
+//             }
+
+//             // ...
+//         })
+//         .catch((error) => {
+//             const errorCode = error.code;
+//             const errorMessage = error.message;
+//             swal("warning!", "Ist you are go and create Account!", "error");
+//         });
+//     }
+
+
+//     // let loginFlag;
+//     if (loginEmailRegix) {
+//         swal("Your Email Address is Empty");
+//         // loginFlag = false;
+//     }
+//     else if (!loginEmailRegix2) {
+//         swal("warning!", "Your Email Address is invalid!", "error");
+//         // loginFlag = false;
+//     }
+//     else if (loginPasswordRegix) {
+//         swal("Your password is Empty");
+//         // loginFlag = false;
+//     }
+//     else if (!loginPasswordRegix2) {
+//         swal("warning!", "Your password must be contain 8 character the Numbers and Strings!", "error");
+//         // loginFlag = false;
+//     }
+//     // else {
+//     //     loginFlag = true;
+//     // }
+//     // if (loginFlag) {
+//         // loginEmail.value = "";
+//         // loginPassword.value = "";
+//     // }
+
+// })
+
