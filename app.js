@@ -36,8 +36,67 @@ let loginEmail = document.querySelector("#loginEmail");
 let loginPassword = document.querySelector("#loginPassword");
 let login = document.getElementById("login");
 let signUp = document.getElementById("signUp");
+let loginForm = document.getElementById("loginForm");
 
-signUp.addEventListener("click", (event) => {
+
+
+// Login
+
+loginForm.addEventListener("submit", (event) => {
+    event.preventDefault()
+
+
+    const loginEmailRegix = /^\s*$/.test(loginEmail.value);
+    const loginEmailRegix2 = /^([a-zA-Z0-9\._]+)@([a-zA-Z0-9])+.([a-z]+)(.[a-z]+)?$/.test(loginEmail.value);
+    const loginPasswordRegix = /^\s*$/.test(loginPassword.value);
+    const loginPasswordRegix2 = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$/.test(loginPassword.value);
+
+
+    if (!loginEmailRegix && loginEmailRegix2 && !loginPasswordRegix && loginPasswordRegix2) {
+
+        signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
+            .then(async (userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                const docRef = doc(db, "user", user.uid);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    console.log("Document data:", docSnap.data());
+                } else {
+                    console.log("No such document!");
+                }
+
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                swal("warning!", "Ist you are go and create Account!", "error");
+            });
+    }
+
+
+    if (loginEmailRegix) {
+        swal("Your Email Address is Empty");
+    }
+    else if (!loginEmailRegix2) {
+        swal("warning!", "Your Email Address is invalid!", "error");
+    }
+    else if (loginPasswordRegix) {
+        swal("Your password is Empty");
+    }
+    else if (!loginPasswordRegix2) {
+        swal("warning!", "Your password must be contain 8 character the Numbers and Strings!", "error");
+    }
+})
+
+
+
+
+// sign-up
+
+form.addEventListener("submit", (event) => {
     event.preventDefault()
 
     const nameRegix = /^\s*$/.test(name.value);
@@ -102,67 +161,4 @@ signUp.addEventListener("click", (event) => {
     }
 })
 
-
-// login.addEventListener("click", (event) => {
-//     event.preventDefault()
-
-
-//     const loginEmailRegix = /^\s*$/.test(loginEmail.value);
-//     const loginEmailRegix2 = /^([a-zA-Z0-9\._]+)@([a-zA-Z0-9])+.([a-z]+)(.[a-z]+)?$/.test(loginEmail.value);
-//     const loginPasswordRegix = /^\s*$/.test(loginPassword.value);
-//     const loginPasswordRegix2 = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$/.test(loginPassword.value);
-
-
-//     if (!loginEmailRegix && loginEmailRegix2 && !loginPasswordRegix && loginPasswordRegix2) {
-
-//     signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
-//         .then(async(userCredential) => {
-//             // Signed in
-//             const user = userCredential.user;
-//             const docRef = doc(db, "user", user.uid);
-//             const docSnap = await getDoc(docRef);
-
-//             if (docSnap.exists()) {
-//                 console.log("Document data:", docSnap.data());
-//             } else {
-//                 // doc.data() will be undefined in this case
-//                 console.log("No such document!");
-//             }
-
-//             // ...
-//         })
-//         .catch((error) => {
-//             const errorCode = error.code;
-//             const errorMessage = error.message;
-//             swal("warning!", "Ist you are go and create Account!", "error");
-//         });
-//     }
-
-
-//     // let loginFlag;
-//     if (loginEmailRegix) {
-//         swal("Your Email Address is Empty");
-//         // loginFlag = false;
-//     }
-//     else if (!loginEmailRegix2) {
-//         swal("warning!", "Your Email Address is invalid!", "error");
-//         // loginFlag = false;
-//     }
-//     else if (loginPasswordRegix) {
-//         swal("Your password is Empty");
-//         // loginFlag = false;
-//     }
-//     else if (!loginPasswordRegix2) {
-//         swal("warning!", "Your password must be contain 8 character the Numbers and Strings!", "error");
-//         // loginFlag = false;
-//     }
-//     // else {
-//     //     loginFlag = true;
-//     // }
-//     // if (loginFlag) {
-//         // loginEmail.value = "";
-//         // loginPassword.value = "";
-//     // }
-
-// })
 
