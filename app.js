@@ -43,9 +43,6 @@ let section = document.getElementById("section");
 
 
 
-
-
-
 // sign-up
 
 form.addEventListener("submit", (event) => {
@@ -140,7 +137,7 @@ loginForm.addEventListener("submit", (event) => {
 
                 if (docSnap.exists()) {
                     section.style.display = "none";
-                    console.log("Document data:", docSnap.data());
+                    // console.log("Document data:", docSnap.data());
                     const data1 = docSnap.data();
                     showData.innerHTML = `
                     <div class="row">
@@ -182,5 +179,4 @@ loginForm.addEventListener("submit", (event) => {
         swal("warning!", "Your password must be contain 8 character the Numbers and Strings!", "error");
     }
 })
-
 
