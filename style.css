@@ -85,7 +85,7 @@ section .container .user .formBx form input[type='submit'] {
   transition: 0.5s;
 }
 
-h4 {
+p {
   font-family: 'Baloo Bhai 2', cursive;
   text-align: center;
 }

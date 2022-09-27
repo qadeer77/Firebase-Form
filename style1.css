@@ -17,9 +17,40 @@ section {
   padding: 20px;
 }
 
+#showData {
+  position: relative;
+  min-height: 100vh;
+  background-color: #f8dd30;
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  padding: 20px;
+}
+
+#border-width {
+  position: relative;
+  top: 90px;
+  border-radius: 10px;
+  background-color: white;
+  width: 310px;
+  height: 420px;
+  text-align: center;
+}
+
+h4 {
+  position: relative;
+  top: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+p {
+  position: relative;
+  top: 20px;
+  font-family: 'Baloo Bhai 2', cursive;
+}
+
 section .container {
   position: relative;
-  /* width: 800px; */
   width: 400px;
   height: 350px;
   background: #fff;

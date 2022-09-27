@@ -37,59 +37,11 @@ let loginPassword = document.querySelector("#loginPassword");
 let login = document.getElementById("login");
 let signUp = document.getElementById("signUp");
 let loginForm = document.getElementById("loginForm");
+let showData = document.getElementById("showData");
+let section = document.getElementById("section");
 
 
 
-// Login
-
-loginForm.addEventListener("submit", (event) => {
-    event.preventDefault()
-
-
-    const loginEmailRegix = /^\s*$/.test(loginEmail.value);
-    const loginEmailRegix2 = /^([a-zA-Z0-9\._]+)@([a-zA-Z0-9])+.([a-z]+)(.[a-z]+)?$/.test(loginEmail.value);
-    const loginPasswordRegix = /^\s*$/.test(loginPassword.value);
-    const loginPasswordRegix2 = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$/.test(loginPassword.value);
-
-
-    if (!loginEmailRegix && loginEmailRegix2 && !loginPasswordRegix && loginPasswordRegix2) {
-
-        signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
-            .then(async (userCredential) => {
-                // Signed in
-                const user = userCredential.user;
-                const docRef = doc(db, "user", user.uid);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    console.log("Document data:", docSnap.data());
-                } else {
-                    console.log("No such document!");
-                }
-
-                // ...
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                swal("warning!", "Ist you are go and create Account!", "error");
-            });
-    }
-
-
-    if (loginEmailRegix) {
-        swal("Your Email Address is Empty");
-    }
-    else if (!loginEmailRegix2) {
-        swal("warning!", "Your Email Address is invalid!", "error");
-    }
-    else if (loginPasswordRegix) {
-        swal("Your password is Empty");
-    }
-    else if (!loginPasswordRegix2) {
-        swal("warning!", "Your password must be contain 8 character the Numbers and Strings!", "error");
-    }
-})
 
 
 
@@ -122,6 +74,7 @@ form.addEventListener("submit", (event) => {
                     EmailAddress: email.value,
                     Password: password.value,
                 });
+                window.location.href = "./login.html";
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -157,6 +110,75 @@ form.addEventListener("submit", (event) => {
         swal("Your password is Empty");
     }
     else if (!passwordRegix2) {
+        swal("warning!", "Your password must be contain 8 character the Numbers and Strings!", "error");
+    }
+})
+
+
+
+
+// Login
+
+loginForm.addEventListener("submit", (event) => {
+    event.preventDefault()
+
+
+    const loginEmailRegix = /^\s*$/.test(loginEmail.value);
+    const loginEmailRegix2 = /^([a-zA-Z0-9\._]+)@([a-zA-Z0-9])+.([a-z]+)(.[a-z]+)?$/.test(loginEmail.value);
+    const loginPasswordRegix = /^\s*$/.test(loginPassword.value);
+    const loginPasswordRegix2 = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$/.test(loginPassword.value);
+
+
+    if (!loginEmailRegix && loginEmailRegix2 && !loginPasswordRegix && loginPasswordRegix2) {
+
+        signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
+            .then(async (userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                const docRef = doc(db, "user", user.uid);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    section.style.display = "none";
+                    console.log("Document data:", docSnap.data());
+                    const data1 = docSnap.data();
+                    showData.innerHTML = `
+                    <div class="row">
+                      <div class="col">
+                       <div id="border-width">
+                        <h4>Name: </h4> <p> ${data1.FullName} </p>
+                        <h4>FatherName: </h4> <p> ${data1.FatherName} </p>
+                        <h4>DateOfBirth: </h4> <p> ${data1.DateOfBirth} </p>
+                        <h4>EmailAddress: </h4> <p> ${data1.EmailAddress} </p> 
+                        <h4>Password: </h4> <p> ${data1.Password} </p>
+                      </div>
+                    </div>
+                    `
+                } else {
+                    console.log("No such document!");
+                }
+
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                swal("warning!", "Ist you are go and create Account!", "error");
+            });
+
+    }
+
+
+    if (loginEmailRegix) {
+        swal("Your Email Address is Empty");
+    }
+    else if (!loginEmailRegix2) {
+        swal("warning!", "Your Email Address is invalid!", "error");
+    }
+    else if (loginPasswordRegix) {
+        swal("Your password is Empty");
+    }
+    else if (!loginPasswordRegix2) {
         swal("warning!", "Your password must be contain 8 character the Numbers and Strings!", "error");
     }
 })
